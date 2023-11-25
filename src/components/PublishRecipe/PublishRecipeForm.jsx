@@ -1,20 +1,24 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Toaster, toast } from "react-hot-toast";
 
-import { useGlobalContext } from "../../utils/AppContext";
 import List from "./List";
 
-import { getCategories, addRecipe } from "../../utils/FakeData";
+import { useAuth } from "../../config/AuthContext";
+import {db} from "../../config/FirebaseConfig"
+import { collection, getDocs, addDoc } from "firebase/firestore"
+
 
 function PublishRecipeForm() {
-    const {user} = useGlobalContext()
+    const {user} = useAuth()
     const navigate = useNavigate()
+    const categoriesCollectionRef = collection(db, "categories")
     const [categories, setCategories] = useState([]);
     const [recipe, setRecipe] = useState({
         name: "",
         image: "",
         category: "",
-        author: user,
+        author: user.displayName,
         duration: "",
         description: "",
         tags: [],
@@ -23,7 +27,12 @@ function PublishRecipeForm() {
     });
 
     useEffect(() => {
-        setCategories(getCategories());
+        const getCategories = async () => {
+            const data = await getDocs(categoriesCollectionRef)
+            setCategories(data.docs.map((doc) => ({...doc.data(), id: doc.id})))
+        }
+
+        getCategories()
     }, []);
 
     const handleChange = (e) => {
@@ -35,10 +44,25 @@ function PublishRecipeForm() {
         });
     };
 
-    const publishRecipe = (e) => {
+    const publishRecipe = async (e) => {
         e.preventDefault()
-        addRecipe(recipe)
-        navigate("/recipes")
+
+        try {
+            await addDoc(collection(db, "recipes"), recipe);
+            toast.success("Receta publicada con éxito.", {
+                duration: 3000,
+            });
+            setTimeout(() => {
+                navigate("/recipes");
+            }, 1000);
+
+        } catch (err) {
+            console.log(err);
+            toast.error(err.message, {
+                duration: 3000,
+            });
+        }
+
     }
 
     return (
@@ -90,8 +114,8 @@ function PublishRecipeForm() {
                             >
                                 {categories.map((category, index) => {
                                     return (
-                                        <option value={category} key={index}>
-                                            {category}
+                                        <option value={category.name} key={index}>
+                                            {category.name}
                                         </option>
                                     );
                                 })}
@@ -171,6 +195,8 @@ function PublishRecipeForm() {
                     </div>
                 </form>
             </div>
+
+            <Toaster />
         </div>
     );
 }

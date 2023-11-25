@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import { useParams } from "react-router-dom";
 
 import Navbar from "../components/Navbar";
@@ -7,12 +7,24 @@ import Footer from "../components/Footer";
 import { useGlobalContext } from "../utils/AppContext";
 
 import {getRecipeById} from "../utils/FakeData"
+import {db} from "../config/FirebaseConfig"
+import { getDoc, doc } from "firebase/firestore"
 
 function ViewRecipePage() {
     const {theme} = useGlobalContext()
     const {recipeId} = useParams()
+    const [recipe, setRecipe] = useState(getRecipeById(1))
 
-    const recipe = getRecipeById(Number(recipeId));
+    useEffect(() => {
+        const getRecipe = async () => {
+            const d = await (getDoc(doc(db, "recipes", recipeId)))
+            setRecipe(d.data())
+        }
+
+        getRecipe()
+    }, [])
+
+    //const recipe = getRecipeById(Number(recipeId));
 
     return <div data-theme={theme}>
         <Navbar />

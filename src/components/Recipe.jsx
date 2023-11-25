@@ -33,7 +33,7 @@ function Recipe({ recipe }) {
                                 tabIndex="0"
                                 className="focus:outline-none text-xs text-gray-600 pl-1"
                             >
-                                por {author.name}
+                                por {author}
                             </p>
 
                             <div className="bg-yellow-200 py-1.5 px-6 rounded-full">

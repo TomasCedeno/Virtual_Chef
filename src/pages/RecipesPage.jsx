@@ -8,19 +8,27 @@ import { useGlobalContext } from "../utils/AppContext";
 
 import { MdSearch } from "react-icons/md";
 
-import { getRecipes, getRecipeText } from "../utils/FakeData";
+import { getRecipeText } from "../utils/FakeData";
+import {db} from "../config/FirebaseConfig"
+import { collection, getDocs } from "firebase/firestore"
 
 function RecipesPage() {
     const { theme } = useGlobalContext();
     const [recipes, setRecipes] = useState([]);
+    const [allRecipes, setAllRecipes] = useState([]);
     const searchInputRef = useRef();
     const [search, setSearch] = useState("");
+    const recipesCollectionRef = collection(db, "recipes")
 
-    const allRecipes = getRecipes();
+    const getRecipes = async () => {
+        const data = await getDocs(recipesCollectionRef)
+        setRecipes(data.docs.map((doc) => ({...doc.data(), id: doc.id})))
+        setAllRecipes(data.docs.map((doc) => ({...doc.data(), id: doc.id})))
+    }
 
     useEffect(() => {
-        setRecipes(allRecipes);
-    }, []);
+        getRecipes()
+    }, [])
 
     const handleChange = () => {
         setSearch(searchInputRef.current.value);
@@ -28,11 +36,11 @@ function RecipesPage() {
 
     useEffect(() => {
         if (search === "") {
-            setRecipes(allRecipes);
+            getRecipes()
             return;
         }
 
-        const filteredRecipes = recipes.filter((recipe) =>
+        const filteredRecipes = allRecipes.filter((recipe) =>
             getRecipeText(recipe).includes(search)
         );
         setRecipes(filteredRecipes);
@@ -64,7 +72,7 @@ function RecipesPage() {
                             required
                         />
                         <button
-                            type="submit"
+                            type="button"
                             className="btn btn-primary btn-sm text-white absolute right-2.5 bottom-2.5 "
                         >
                             Buscar

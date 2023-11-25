@@ -6,19 +6,26 @@ import Footer from "../components/Footer";
 import Recipe from "../components/Recipe";
 import { useGlobalContext } from "../utils/AppContext";
 
-
 import recipesImg from "../assets/recipes.jpg";
 import ingredientsImg from "../assets/ingredients.jpg"
 
-import {getRecipes} from "../utils/FakeData"
+import {db} from "../config/FirebaseConfig"
+import { collection, getDocs } from "firebase/firestore"
+
 
 function LandingPage() {
     const [recipes, setRecipes] = useState([])
     const navigate = useNavigate();
     const { theme } = useGlobalContext();
+    const recipesCollectionRef = collection(db, "recipes")
 
     useEffect(() => {
-        setRecipes(getRecipes())
+        const getRecipes = async () => {
+            const data = await getDocs(recipesCollectionRef)
+            setRecipes(data.docs.map((doc) => ({...doc.data(), id: doc.id})))
+        }
+
+        getRecipes();
     }, [])
 
     return (

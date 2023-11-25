@@ -75,12 +75,12 @@ function RecipeDetail({ recipe }) {
                                     className="flex items-center mt-6 mb-6"
                                 >
                                     <img
-                                        src={author.image}
+                                        src={"https://cdn-icons-png.flaticon.com/512/3177/3177440.png"}
                                         alt="avatar"
                                         className="hidden object-cover w-14 h-14 mx-4 rounded-full sm:block"
                                     />
                                     <h1 className="font-bold hover:underline">
-                                        Por {author.name}
+                                        Por {author}
                                     </h1>
                                 </a>
                             </div>

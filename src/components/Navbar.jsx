@@ -7,15 +7,22 @@ import { useAuth } from "../config/AuthContext"
 import { useGlobalContext } from "../utils/AppContext";
 import { Link } from "react-router-dom";
 
-import { getCategories } from "../utils/FakeData";
+import {db} from "../config/FirebaseConfig"
+import { collection, getDocs } from "firebase/firestore"
 
 function Navbar() {
     const { user, logout } = useAuth();
     const { toggleTheme } = useGlobalContext();
     const [categories, setCategories] = useState([]);
+    const categoriesCollectionRef = collection(db, "categories")
 
     useEffect(() => {
-        setCategories(getCategories());
+        const getCategories = async () => {
+            const data = await getDocs(categoriesCollectionRef)
+            setCategories(data.docs.map((doc) => ({...doc.data(), id: doc.id})))
+        }
+
+        getCategories()
     }, []);
 
     return (
@@ -40,7 +47,7 @@ function Navbar() {
                             <ul className="p-2 z-40 max-h-80 overflow-y-scroll">
                                 {categories.map((category, index) => {
                                     return <li key={index}>
-                                        <a href="/#">{category}</a>
+                                        <a href="/#">{category.name}</a>
                                     </li>;
                                 })}
                             </ul>

@@ -31,7 +31,7 @@ export const recipe = {
     ],
     tags: ["Pollo", "Parmesano", "Italiana", "Horno", "Queso", "Cena"],
     category: "Platos Principales",
-    author: user,
+    author: "",
     duration: 45,
 };
 
