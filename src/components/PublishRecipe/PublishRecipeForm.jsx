@@ -68,7 +68,7 @@ function PublishRecipeForm() {
     return (
         <div className="mt-6 primary bg-base-200">
             <div className=" px-10 py-6 mx-auto w-full">
-                <form className="w-full px-10 py-6 bg-base-200 flex justify-evenly gap-10" onSubmit={publishRecipe}>
+                <form className="w-full px-10 py-6 bg-base-200 flex justify-evenly gap-10">
                     <div className="left w-1/2">
                         <div className="mt-4">
                             <label className="block font-bold">
@@ -187,7 +187,7 @@ function PublishRecipeForm() {
                             </div>
 
                             <div className="flex justify-center">
-                                <button type="submit" className="btn btn-secondary mb-6 w-11/12">
+                                <button type="button" className="btn btn-secondary mb-6 w-11/12" onClick={publishRecipe}>
                                     Publicar Receta
                                 </button>
                             </div>

@@ -47,7 +47,7 @@ function Navbar() {
                             <ul className="p-2 z-40 max-h-80 overflow-y-scroll">
                                 {categories.map((category, index) => {
                                     return <li key={index}>
-                                        <a href="/#">{category.name}</a>
+                                        <Link to={`/recipes/${category.name}`}>{category.name}</Link>
                                     </li>;
                                 })}
                             </ul>

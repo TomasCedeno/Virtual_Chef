@@ -1,16 +1,16 @@
 import React, { useEffect, useRef, useState } from "react";
+import { useParams } from "react-router-dom";
 
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import Recipe from "../components/Recipe";
 import { useGlobalContext } from "../utils/AppContext";
 
-
 import { MdSearch } from "react-icons/md";
 
 import { getRecipeText } from "../utils/FakeData";
 import {db} from "../config/FirebaseConfig"
-import { collection, getDocs } from "firebase/firestore"
+import { collection, getDocs, query, where } from "firebase/firestore"
 
 function RecipesPage() {
     const { theme } = useGlobalContext();
@@ -19,16 +19,20 @@ function RecipesPage() {
     const searchInputRef = useRef();
     const [search, setSearch] = useState("");
     const recipesCollectionRef = collection(db, "recipes")
+    const {category} = useParams()
 
     const getRecipes = async () => {
-        const data = await getDocs(recipesCollectionRef)
+        let recipeQuery = category ? query(recipesCollectionRef, where('category', '==', category)) : query(recipesCollectionRef);
+
+        const data = await getDocs(recipeQuery)
+        
         setRecipes(data.docs.map((doc) => ({...doc.data(), id: doc.id})))
         setAllRecipes(data.docs.map((doc) => ({...doc.data(), id: doc.id})))
     }
 
     useEffect(() => {
         getRecipes()
-    }, [])
+    }, [category])
 
     const handleChange = () => {
         setSearch(searchInputRef.current.value);

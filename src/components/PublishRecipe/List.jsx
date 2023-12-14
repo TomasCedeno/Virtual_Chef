@@ -16,6 +16,12 @@ function List({ list, setRecipe, recipe }) {
         setRecipe({...recipe})
     }
 
+    const handleEnter = (event) => {
+        if (event.key == "Enter"){
+            addItem()
+        }
+    }
+
     return (
         <div className="bg-base-100 rounded-md p-5 my-5">
             <div>
@@ -26,6 +32,7 @@ function List({ list, setRecipe, recipe }) {
                         className="block p-3 w-full text-sm primary rounded-l-lg border border-gray-300"
                         placeholder="Agregar..."
                         ref={inputRef}
+                        onKeyDown={handleEnter}
                     />
                     <button
                         onClick={addItem}
